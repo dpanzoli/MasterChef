@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+<script src="phaser.min.js"></script>
+<script
+<script language="javascript">
+
+var game = new Phaser.Game(800, 600, Phaser.AUTO, 'MasterChef v1', { preload: preload, create: create });
+
+function preload() {
+
+	game.load.spritesheet('saladier', 'assets/saladier.png', 120, 60, 8);
+	game.load.spritesheet('moule', 'assets/moule.png', 120, 90, 3);
+	game.load.spritesheet('oeuf', 'assets/oeuf.png', 60, 60, 2);
+	game.load.spritesheet('lait', 'assets/lait.png', 60, 120, 4);
+	game.load.spritesheet('farine', 'assets/farine.png', 60, 90, 2);
+	game.load.spritesheet('spatule', 'assets/spatule.png', 90, 60, 2);
+	game.load.spritesheet('four', 'assets/four.png', 180, 180, 3);
+	game.load.spritesheet('cuisson', 'assets/cuisson.png', 180, 60, 2);
+	game.load.spritesheet('casserole', 'assets/casserole.png', 90, 90, 3);
+	game.load.spritesheet('épices', 'assets/épices.png', 20, 40, 1);
+	game.load.spritesheet('sucre', 'assets/sucre.png', 60, 90, 1);
+	game.load.spritesheet('miel', 'assets/miel.png', 40, 40, 1);
+	game.load.spritesheet('doseur', 'assets/verre_doseur.png', 60, 90, 2);
+
+	game.load.image('cuisine', 'assets/scène.png');
+	
+}
+
+var sprites;
+
+var objets = {
+	oeuf: {
+		nom: 'oeuf',
+		type: 'ingrédient',
+		états: ['frais','cassé'],
+		état: 'frais',
+		x:150,
+		y:410,
+		mobile: true
+	},
+	lait: {
+		nom: 'lait',
+		type: 'ingrédient',
+		états: ['plein','entamé','presqueVide','vide'],
+		état: 'plein',
+		x: 680,
+		y: 410,
+		mobile: true
+	},
+	farine: {
+		nom: 'farine',
+		type: 'ingrédient',
+		états: ['neuf','entamé'],
+		état: 'neuf',
+		x: 210,
+		y: 410,
+		mobile: true
+	},
+	saladier: {
+		nom: 'saladier',
+		type: 'ustensile',
+		états: ['propre', 'mélangé', 'sale', 'blanc', 'oeuf', 'épice', 'presqueTout', 'tout'],
+		état: 'propre',
+		contenu: [],
+		x: 400,
+		y: 410,
+		mobile: false
+	},
+	moule: {
+		nom: 'moule',
+		type: 'ustensile',
+		états: ['vide','plein','cuit'],
+		état: 'vide',
+		x: 550,
+		y: 450,
+		mobile: true
+	},
+	spatule: {
+		nom: 'spatule',
+		type: 'ustensile',
+		états: ['propre', 'sale'],
+		état: 'propre',
+		x: 350,
+		y: 460,
+		mobile: true
+	},
+	four: {
+		nom: 'four',
+		type: 'électroménager',
+		états: ['éteint', 'allumé', 'cuisson'],
+		état: 'éteint',
+		x: 680,
+		y: 260,
+		mobile: false
+	},
+	cuisson: {
+		nom: 'cuisson',
+		type: 'électroménager',
+		états: ['éteint', 'allumé'],
+		état: 'éteint',
+		x: 150,
+		y: 250,
+		mobile: false
+	},
+	sucre: {
+		nom: 'sucre',
+		type: 'ingrédient',
+		états: ['plein'],
+		état: 'plein',
+		x: 70,
+		y: 420,
+		mobile: true
+	},
+	miel: {
+		nom: 'miel',
+		type: 'ingrédient',
+		états: ['plein'],
+		état: 'plein',
+		x: 130,
+		y: 470,
+		mobile: true
+	},
+	casserole: {
+		nom: 'casserole',
+		type: 'ustensile',
+		états: ['vide', 'pleine', 'chaude'],
+		état: 'vide',
+		x: 680,
+		y: 470,
+		mobile: true
+	},
+	épices: {
+		nom: 'épices',
+		type: 'ingrédient',
+		états: ['plein'],
+		état: 'plein',
+		x: 180,
+		y: 470,
+		mobile: true
+	},
+	doseur: {
+		nom: 'doseur',
+		type: 'ustensile',
+		états: ['vide', 'plein'],
+		état: 'vide',
+		x: 270,
+		y: 470,
+		mobile: true
+	},
+}
+
+var interactions = {
+	'farine/neuf': {
+		'doseur/vide': function(farine, doseur) {
+			farine.état='entamé'; farine.sprite.frame=1;
+			doseur.état='plein'; doseur.sprite.frame=1;
+		}
+	},
+	'doseur/plein': {
+		'saladier/propre': function(doseur, saladier) {
+			doseur.état='vide'; doseur.sprite.frame=0;
+			saladier.état='blanc'; saladier.sprite.frame=3;
+		}
+	},
+	'oeuf/frais': {
+		'saladier/blanc': function(oeuf, saladier) {
+			oeuf.état='cassé'; oeuf.sprite.frame=1;
+			saladier.état='oeuf'; saladier.sprite.frame=4;
+		}
+
+	},
+	'épices/plein': {
+		'saladier/oeuf': function(oeuf, saladier) {
+			saladier.état='presqueTout'; saladier.sprite.frame=6;
+		}
+	},
+	'lait/plein': {
+		'casserole/vide': function(lait, casserole) {
+			lait.etat='entamé'; lait.sprite.frame=1;
+			casserole.état='pleine'; casserole.sprite.frame=1;
+		}
+	},
+	'cuisson/allumé': {
+		'self': function(cuisson) {
+			cuisson.état='éteint'; cuisson.sprite.frame=0;
+		}
+	},
+	'casserole/pleine': {
+		'cuisson/allumé': function(casserole, cuisson) {
+			game.time.events.add(Phaser.Timer.SECOND * 3, function() {
+				casserole.état='chaude'; casserole.sprite.frame=2;
+				
+			}, this);
+			casserole.x = 120; casserole.y = 230;
+		}
+	},
+	'casserole/chaude': {
+		'saladier/presqueTout': function(casserole, saladier) {
+			casserole.état='vide'; casserole.sprite.frame=0;
+			saladier.état='tout'; saladier.sprite.frame=7;
+		}		
+	},
+	'spatule/propre': {
+		'saladier/tout': function(spatule, saladier) {
+			spatule.état='sale'; spatule.sprite.frame=1;
+			saladier.état='mélangé'; saladier.sprite.frame=1;
+			saladier.sprite.input.enableDrag(true);
+		}
+	},
+	'four/éteint': {
+		'self': function(four) {
+			four.état='allumé'; four.sprite.frame=1;
+		}
+	},
+	'four/allumé': {
+		'self': function(four) {
+			four.état='éteint'; four.sprite.frame=0;
+		}
+	},
+	'saladier/mélangé': {
+		'moule/vide': function(saladier, moule) {
+			saladier.état='sale'; saladier.sprite.frame=2;
+			moule.état='plein'; moule.sprite.frame=1; moule.sprite.input.enableDrag(true);
+		}
+	},
+	'moule/plein': {
+		'four/allumé': function(moule, four) {
+			four.state='cuisson'; four.sprite.frame=2;
+			moule.sprite.visible=false;
+			game.time.events.add(Phaser.Timer.SECOND * 3, function() {
+				four.state='allumé'; four.sprite.frame=1;
+				moule.sprite.visible=true;
+				moule.état='cuit'; moule.sprite.frame=2;
+				moule.sprite.input.enableDrag(false);
+				//fin de la recette
+				var text = game.add.text(game.world.centerX, game.world.height, "Bravo !\n Superbe pain d'épice !", { font: 'bold 48pt Arial'});
+				var grd = text.context.createLinearGradient(0, 0, 0, text.height);
+				grd.addColorStop(0, '#8CFFFF');   
+				grd.addColorStop(1, '#2BFF60');
+				text.align = 'center';
+				text.fill = grd;
+				text.stroke = "#000";
+				text.strokeThickness = 5;
+				text.anchor.set(0.5,1);
+			}, this);
+			
+		}
+	},
+	'cuisson/éteint': {
+		'self': function(cuisson) {
+			cuisson.état='allumé'; cuisson.sprite.frame=1;
+		}
+	},
+};
+
+
+function create() {
+
+	game.add.sprite(0, 0, 'cuisine');
+
+	
+	
+	sprites = game.add.group();
+
+	Object.keys(objets).forEach(function(objDataKey) {
+		objData = objets[objDataKey];
+		objSprite = sprites.create(objData.x, objData.y, objData.nom, 0);
+		objSprite.anchor.setTo(0.5,1);
+		objData.sprite = objSprite;
+		game.physics.enable(objSprite, Phaser.Physics.ARCADE);
+		objSprite.inputEnabled = true;
+		if (objData.mobile) objSprite.input.enableDrag(true);
+		//Gestion du drag&drop des objets pour les interactions entre
+		//un objet et un autre.
+		objSprite.events.onDragStart.add(function(obj) {
+			obj.bringToTop();
+			obj.retourne = function() {
+				game.add.tween(obj).to(
+					{ x:objets[obj.key].x, y:objets[obj.key].y},
+					1000,
+					Phaser.Easing.Circular.Out,
+					true
+				);
+			}
+		}, this);
+		objSprite.events.onDragStop.add(function(obj) {
+			game.physics.arcade.overlap(obj, sprites, function(me, other) {
+				var source = me.key+"/"+objets[me.key].état;
+				var cible = other.key+"/"+objets[other.key].état
+				try {
+					//Y'a-t-il une interaction entre ces 2 objets ?
+					interactions[source][cible](objets[me.key], objets[other.key]);
+				}
+				catch(err) {
+					console.log("Aucune interaction entre "+source+" et "+cible);
+				}
+			});
+			//Dans tous les cas, l'objet retourne à sa (nouvelle ?) place
+			obj.retourne();
+		}, this);
+
+		//Les objets qu'on ne peut pas drag&dropper peuvent
+		//interagir avec eux-même...
+		objSprite.events.onInputUp.add(function(obj) {
+			if (!obj.input.draggable) {
+				var source = obj.key+"/"+objets[obj.key].état;
+				try {
+					//Y-a-t-il une interaction de l'objet avec lui-même
+					interactions[source]['self'](objets[obj.key]);
+				} catch(err) {
+					console.log("Aucune interaction de "+source+" sur lui-même");
+				}
+			}
+		});
+	});
+}
+
+</script>
+</html>
