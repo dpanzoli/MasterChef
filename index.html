@@ -7,246 +7,133 @@
 
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'MasterChef v1', { preload: preload, create: create });
 
-var sprites;
-
-var objets = {
-	lait: {
-		nom: 'lait',
-		type: 'ingrédient',
-		états: ['plein','entamé','presqueVide','vide'],
-		état: 'plein',
-		x: 280,
-		y: 420,
-		mobile: true
-	},
-	farine: {
-		nom: 'farine',
-		type: 'ingrédient',
-		états: ['neuf','entamé'],
-		état: 'neuf',
-		x: 210,
-		y: 420,
-		mobile: true
-	},
-	saladier: {
-		nom: 'saladier',
-		type: 'ustensile',
-		états: ['propre', 'mélangé', 'sale', 'blanc', 'oeuf', 'épice', 'presqueTout', 'tout'],
-		état: 'propre',
-		contenu: [],
-		x: 400,
-		y: 410,
-		mobile: false
-	},
-	sucre: {
-		nom: 'sucre',
-		type: 'ingrédient',
-		états: ['plein'],
-		état: 'plein',
-		x: 120,
-		y: 420,
-		mobile: true
-	},
-	doseur: {
-		nom: 'doseur',
-		type: 'conteneur',
-		états: ['vide', 'plein'],
-		état: 'vide',
-		contenu: [],
-		x: 510,
-		y: 450,
-		mobile: true
-	},
-}
-
-var interactions = {
-	'lait/plein': {
-		'doseur/vide': function(lait, doseur) {
-			lait.état='entamé'; lait.sprite.frame=1;
-			doseur.état='plein'; doseur.sprite.frame=1;
-			doseur.contenu.push('laitMesuré');
-		},
-		'saladier/propre': function(lait, saladier) {
-			lait.état='entamé'; lait.sprite.frame=1;
-			saladier.état='blanc'; saladier.sprite.frame=3;
-			saladier.contenu.push('lait')
-		},
-		'saladier/blanc': function(lait, saladier) {
-			lait.état='entamé'; lait.sprite.frame=1;
-			saladier.contenu.push('lait')
-		}
-	},
-	'lait/entamé': {
-		'doseur/vide': function(lait, doseur) {
-			lait.état='presqueVide'; lait.sprite.frame=2;
-			doseur.état='plein'; doseur.sprite.frame=1;
-			doseur.contenu.push('laitMesuré');
-		},
-		'saladier/propre': function(lait, saladier) {
-			lait.état='presqueVide'; lait.sprite.frame=2;
-			saladier.état='blanc'; saladier.sprite.frame=3;
-			saladier.contenu.push('lait')
-		},
-		'saladier/blanc': function(lait, saladier) {
-			lait.état='presqueVide'; lait.sprite.frame=2;
-			saladier.contenu.push('lait')
-		}
-	},
-	'lait/presqueVide': {
-		'doseur/vide': function(lait, doseur) {
-			lait.état='vide'; lait.sprite.frame=3;
-			doseur.état='plein'; doseur.sprite.frame=1;
-			doseur.contenu.push('laitMesuré');
-		},
-		'saladier/propre': function(lait, saladier) {
-			lait.état='vide'; lait.sprite.frame=3;
-			saladier.état='blanc'; saladier.sprite.frame=3;
-			saladier.contenu.push('lait')
-		},
-		'saladier/blanc': function(lait, saladier) {
-			lait.état='vide'; lait.sprite.frame=3;
-			saladier.contenu.push('lait')
-		}
-	},
-	'farine/neuf': {
-		'doseur/vide': function(farine, doseur) {
-			farine.état='entamé'; farine.sprite.frame=1;
-			doseur.état='plein'; doseur.sprite.frame=1;
-			doseur.contenu.push('farineMesurée');
-		},
-		'saladier/propre': function(farine, saladier) {
-			farine.état='entamé'; farine.sprite.frame=1;
-			saladier.état='blanc'; saladier.sprite.frame=3;
-			saladier.contenu.push('farine')
-		},
-		'saladier/blanc': function(farine, saladier) {
-			farine.état='entamé'; farine.sprite.frame=1;
-			saladier.contenu.push('farine')
-		}
-	},
-	'farine/entamé': {
-		'doseur/vide': function(farine, doseur) {
-			doseur.état='plein'; doseur.sprite.frame=1;
-			doseur.contenu.push('farineMesurée');
-		},
-		'saladier/propre': function(farine, saladier) {
-			saladier.état='blanc'; saladier.sprite.frame=3;
-			saladier.contenu.push('farine')
-		},
-		'saladier/blanc': function(farine, saladier) {
-			farine.état='entamé'; farine.sprite.frame=1;
-			saladier.contenu.push('farine')
-		}
-	},
-	'sucre/plein': {
-		'doseur/vide': function(sucre, doseur) {
-			doseur.état='plein'; doseur.sprite.frame=1;
-			doseur.contenu.push('sucreMesuré');
-		},
-		'saladier/propre': function(sucre, saladier) {
-			saladier.état='blanc'; saladier.sprite.frame=3;
-			saladier.contenu.push('sucre')
-		},
-		'saladier/blanc': function(sucre, saladier) {
-			saladier.contenu.push('sucre')
-		}
-	},
-	'doseur/plein': {
-		'saladier/propre': function(doseur, saladier) {
-			saladier.contenu=saladier.contenu.concat(doseur.contenu);
-			doseur.contenu = [];
-			saladier.état = 'blanc'; saladier.sprite.frame=3;
-			doseur.état='vide'; doseur.sprite.frame=0;
-		},
-		'saladier/blanc': function(doseur, saladier) {
-			saladier.contenu=saladier.contenu.concat(doseur.contenu);
-			doseur.contenu = [];
-			doseur.état='vide'; doseur.sprite.frame=0;
-		}
-	}
-};
-
-
 function preload() {
 
-	game.load.spritesheet('saladier', 'assets/saladier.png', 120, 60, 8);
-	game.load.spritesheet('moule', 'assets/moule.png', 120, 90, 3);
+	game.load.spritesheet('saladier', 'assets/saladier.png', 120, 60, 4);
+	game.load.spritesheet('moule', 'assets/moule.png', 120, 60, 3);
 	game.load.spritesheet('oeuf', 'assets/oeuf.png', 60, 60, 2);
 	game.load.spritesheet('lait', 'assets/lait.png', 60, 120, 4);
 	game.load.spritesheet('farine', 'assets/farine.png', 60, 90, 2);
-	game.load.spritesheet('spatule', 'assets/spatule.png', 90, 60, 2);
-	game.load.spritesheet('four', 'assets/four.png', 180, 180, 3);
-	game.load.spritesheet('cuisson', 'assets/cuisson.png', 180, 60, 2);
-	game.load.spritesheet('casserole', 'assets/casserole.png', 90, 90, 3);
-	game.load.spritesheet('épices', 'assets/épices.png', 20, 40, 1);
-	game.load.spritesheet('sucre', 'assets/sucre.png', 60, 90, 1);
-	game.load.spritesheet('miel', 'assets/miel.png', 40, 40, 1);
-	game.load.spritesheet('doseur', 'assets/verre_doseur.png', 60, 90, 2);
-
-	game.load.image('cuisine', 'assets/scène.png');
+	game.load.spritesheet('cuillère', 'assets/cuillère.png', 90, 60, 2);
+	game.load.spritesheet('four', 'assets/four.png', 180, 180, 2);
 	
+	//Preload game data
+	game.load.json('scene', 'scène.json');
+	game.load.json('recette', 'recette.json');
 }
+
+var ingredients;
+var scene, interactions;
 
 function create() {
 
-	game.add.sprite(0, 0, 'cuisine');
+	game.stage.backgroundColor = "#dedede";
 
+	scene = game.cache.getJSON('scene');
 	
-	
-	sprites = game.add.group();
+	//Parsing de la recette
+	var recetteData = game.cache.getJSON('recette');
+	//Création de l'index principal pour permettre de retrouver facilement
+	//les interactions attachées à un objet (source)
+	interactions = {};
+	recetteData.forEach(function(interaction) {
+		var obj = interaction.preconditions.source.obj;
+		var libétats = interaction.preconditions.source.état;
+		//Il peut y avoir un ou plusieurs états initiaux
+		//Je simplifie en regroupant les 2 cas.
+		if (!(libétats instanceof Array)) libétats = [ libétats ];
+		libétats.forEach(function(libétat) {
+			var état = scene[obj].états.indexOf(libétat);
+			if (!(obj in interactions)) {
+				interactions[obj] = {};
+				interactions[obj][état] = [];
+				interactions[obj][état].push(interaction);
+			} else {
+				if (!(état in interactions[obj])) {
+					interactions[obj][état] = [];
+					interactions[obj][état].push(interaction);
+				} else {
+					interactions[obj][état].push(interaction);
+				}
+			}
+		});
+	});
 
-	Object.keys(objets).forEach(function(objDataKey) {
-		objData = objets[objDataKey];
-		objSprite = sprites.create(objData.x, objData.y, objData.nom, 0);
-		objSprite.anchor.setTo(0.5,1);
-		objData.sprite = objSprite;
-		game.physics.enable(objSprite, Phaser.Physics.ARCADE);
-		objSprite.inputEnabled = true;
-		if (objData.mobile) objSprite.input.enableDrag(true);
-		//Gestion du drag&drop des objets pour les interactions entre
-		//un objet et un autre.
-		objSprite.events.onDragStart.add(function(obj) {
+	//Création des objets dans la scène
+	//Affectation du comportement drag&drop
+	//Référencement des sprites dans la scene
+	ingredients = game.add.group();
+	Object.keys(scene).forEach(function(key) {
+		var objet = scene[key];
+		ingredient = ingredients.create(objet.x, objet.y, objet.nom, objet.état);
+		objet.sprite = ingredient;
+		ingredient.anchor.setTo(0.5,1);
+		game.physics.enable(ingredient, Phaser.Physics.ARCADE);
+		if (interactions[objet.nom]) {
+			ingredient.inputEnabled = true;
+			ingredient.input.enableDrag(true);
+		}
+		ingredient.events.onDragStart.add(function(obj) {
 			obj.bringToTop();
 			obj.retourne = function() {
 				game.add.tween(obj).to(
-					{ x:objets[obj.key].x, y:objets[obj.key].y},
-					1000,
+					{ x:objet.x, y:objet.y}, 
+					1000, 
 					Phaser.Easing.Circular.Out,
 					true
 				);
 			}
-		}, this);
-		objSprite.events.onDragStop.add(function(obj) {
-			game.physics.arcade.overlap(obj, sprites, function(me, other) {
-				var source = me.key+"/"+objets[me.key].état;
-				var cible = other.key+"/"+objets[other.key].état
-				try {
-					//Y'a-t-il une interaction entre ces 2 objets ?
-					interactions[source][cible](objets[me.key], objets[other.key]);
-				}
-				catch(err) {
-					console.log("Aucune interaction entre "+source+" et "+cible);
-				}
-			});
-			//Dans tous les cas, l'objet retourne à sa (nouvelle ?) place
-			obj.retourne();
-		}, this);
-
-		//Les objets qu'on ne peut pas drag&dropper peuvent
-		//interagir avec eux-même...
-		objSprite.events.onInputUp.add(function(obj) {
-			if (!obj.input.draggable) {
-				var source = obj.key+"/"+objets[obj.key].état;
-				try {
-					//Y-a-t-il une interaction de l'objet avec lui-même
-					interactions[source]['self'](objets[obj.key]);
-				} catch(err) {
-					console.log("Aucune interaction de "+source+" sur lui-même");
-				}
+		});
+		ingredient.events.onDragStop.add(function(obj) {
+			if (!game.physics.arcade.overlap(obj, ingredients, interaction)) {
+				obj.retourne();
 			}
 		});
 	});
 }
 
+
+function interaction(me, other) {
+	//Je veux trouver rapidement les interactions dont me.key est la source.
+	//Je dois disposer d'un index, qui est construit lors du parsing de la recette.
+	var interactionsDisponibles = interactions[me.key][me.frame];
+	if (interactionsDisponibles) {
+		interactionsDisponibles.forEach(function(inter) {
+			//Pour chaque interaction disponible pour cette source dans cet état
+			//Je cherche si l'objet cible dans son état est une cible de l'interaction
+			var ciblePossible = inter.preconditions.cible.obj;
+			var ciblePossibleEtat = inter.preconditions.cible.état;
+			//objet actuellement ciblé par l'interaction
+			var cibleActuelle = other.key;
+			var cibleActuelleEtat = scene[other.key].états[other.frame];
+			var interactionPossible = false;
+			if (ciblePossibleEtat instanceof Array) {
+				//Cas de l'interaction dans plusieurs états
+				if (
+					ciblePossibleEtat.indexOf(cibleActuelleEtat)!=-1 && 
+					cibleActuelle==ciblePossible
+				) interactionPossible = true;
+			} else {
+				//Cas de l'interaction à un seul état
+				if (
+					ciblePossibleEtat==cibleActuelleEtat &&
+					ciblePossible==cibleActuelle
+				) interactionPossible = true;
+			}
+			if (interactionPossible) {
+				//Application des postconditions
+				inter.postconditions.forEach(function(postc) {
+					var obj = postc.obj;
+					var nouvelEtat = scene[postc.obj].états.indexOf(postc.état);
+					scene[obj].état = nouvelEtat;
+					scene[obj].sprite.frame = nouvelEtat;
+				});
+				console.log(scene);
+				return; //car a priori l'interaction est unique, donc pas la peine de continuer
+			}
+		});
+	}
+	me.retourne();
+}
 </script>
 </html>
