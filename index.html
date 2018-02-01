@@ -70,6 +70,10 @@ var interactions = {
 			lait.état='entamé'; lait.sprite.frame=1;
 			saladier.état='blanc'; saladier.sprite.frame=3;
 			saladier.contenu.push('lait')
+		},
+		'saladier/blanc': function(lait, saladier) {
+			lait.état='entamé'; lait.sprite.frame=1;
+			saladier.contenu.push('lait')
 		}
 	},
 	'lait/entamé': {
