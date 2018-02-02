@@ -1,5 +1,5 @@
 {
-	"oeuf": {	
+	"oeuf": {
 		"nom":"oeuf",
 		"type": "ingrédient",
 		"états": ["frais","cassé"],
@@ -12,7 +12,7 @@
 		"type": "ingrédient",
 		"états": ["plein","entamé","presqueVide","vide"],
 		"état": 0,
-		"x": 160, 
+		"x": 160,
 		"y": 400
 	},
 	"farine": {
@@ -23,8 +23,8 @@
 		"x": 220,
 		"y": 400
 	},
-	"cuillère": {
-		"nom": "cuillère",
+	"spatule": {
+		"nom": "spatule",
 		"type": "ustensile",
 		"états": ["propre", "sale"],
 		"état": 0,

@@ -10,13 +10,13 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, 'MasterChef v1', { preload: pr
 function preload() {
 
 	game.load.spritesheet('saladier', 'assets/saladier.png', 120, 60, 4);
-	game.load.spritesheet('moule', 'assets/moule.png', 120, 60, 3);
+	game.load.spritesheet('moule', 'assets/moule.png', 120, 90, 3);
 	game.load.spritesheet('oeuf', 'assets/oeuf.png', 60, 60, 2);
 	game.load.spritesheet('lait', 'assets/lait.png', 60, 120, 4);
 	game.load.spritesheet('farine', 'assets/farine.png', 60, 90, 2);
-	game.load.spritesheet('cuillère', 'assets/cuillère.png', 90, 60, 2);
+	game.load.spritesheet('spatule', 'assets/spatule.png', 90, 60, 2);
 	game.load.spritesheet('four', 'assets/four.png', 180, 180, 2);
-	
+
 	//Preload game data
 	game.load.json('scene', 'scène.json');
 	game.load.json('recette', 'recette.json');
@@ -30,7 +30,7 @@ function create() {
 	game.stage.backgroundColor = "#dedede";
 
 	scene = game.cache.getJSON('scene');
-	
+
 	//Parsing de la recette
 	var recetteData = game.cache.getJSON('recette');
 	//Création de l'index principal pour permettre de retrouver facilement
@@ -77,8 +77,8 @@ function create() {
 			obj.bringToTop();
 			obj.retourne = function() {
 				game.add.tween(obj).to(
-					{ x:objet.x, y:objet.y}, 
-					1000, 
+					{ x:objet.x, y:objet.y},
+					1000,
 					Phaser.Easing.Circular.Out,
 					true
 				);
@@ -110,7 +110,7 @@ function interaction(me, other) {
 			if (ciblePossibleEtat instanceof Array) {
 				//Cas de l'interaction dans plusieurs états
 				if (
-					ciblePossibleEtat.indexOf(cibleActuelleEtat)!=-1 && 
+					ciblePossibleEtat.indexOf(cibleActuelleEtat)!=-1 &&
 					cibleActuelle==ciblePossible
 				) interactionPossible = true;
 			} else {

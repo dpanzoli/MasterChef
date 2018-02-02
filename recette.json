@@ -55,13 +55,13 @@
 		]
 	},
 	{
-		"rule": "cuillère(propre)*saladier(plein)=cuillère(sale)*saladier(mélangé)",
+		"rule": "spatule(propre)*saladier(plein)=spatule(sale)*saladier(mélangé)",
 		"preconditions": {
-			"source":	{"obj": "cuillère", "état":"propre"},
+			"source":	{"obj": "spatule", "état":"propre"},
 			"cible":	{"obj": "saladier", "état":"plein"}
 		},
 		"postconditions": [
-			{"obj": "cuillère", "état": "sale"},
+			{"obj": "spatule", "état": "sale"},
 			{"obj": "saladier", "état": "mélangé"}
 		]
 	},
