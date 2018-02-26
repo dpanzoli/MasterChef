@@ -22,8 +22,13 @@ function preload() {
 	game.load.json('recette', 'recette.json');
 }
 
+	game.load.image('cuisine', 'assets/scène.png');
+
+}
+
 var ingredients;
 var scene, interactions;
+var sprites;
 
 function create() {
 
@@ -74,6 +79,25 @@ function create() {
 			ingredient.input.enableDrag(true);
 		}
 		ingredient.events.onDragStart.add(function(obj) {
+
+	sprites = game.add.group();
+
+	Object.keys(objets).forEach(function(objDataKey) {
+		objData = objets[objDataKey];
+		objSprite = sprites.create(objData.x, objData.y, objData.nom, 0);
+		objSprite.anchor.setTo(0.5,1);
+		objData.sprite = objSprite;
+		game.physics.enable(objSprite, Phaser.Physics.ARCADE);
+		objSprite.inputEnabled = true;
+		objSprite.input.useHandCursor = true;
+
+		nextSources = objSprite;
+
+		if (objData.mobile) objSprite.input.enableDrag(true);
+		//Gestion du drag&drop des objets pour les interactions entre
+		//un objet et un autre.
+		objSprite.events.onDragStart.add(function(obj) {
+			draggedSprite = obj;
 			obj.bringToTop();
 			obj.retourne = function() {
 				game.add.tween(obj).to(
@@ -87,9 +111,86 @@ function create() {
 		ingredient.events.onDragStop.add(function(obj) {
 			if (!game.physics.arcade.overlap(obj, ingredients, interaction)) {
 				obj.retourne();
+		}, this);
+		objSprite.events.onDragStop.add(function(obj) {
+			draggedSprite = null;
+			game.physics.arcade.overlap(obj, sprites, function(me, other) {
+				var source = me.key+"/"+objets[me.key].état;
+				var cible = other.key+"/"+objets[other.key].état
+				try {
+					//Y'a-t-il une interaction entre ces 2 objets ?
+					interactions[source][cible](objets[me.key], objets[other.key]);
+				}
+				catch(err) {
+					console.log("Aucune interaction entre "+source+" et "+cible);
+				}
+			});
+			//Dans tous les cas, l'objet retourne à sa (nouvelle ?) place
+			obj.retourne();
+		}, this);
+
+		//Les objets qu'on ne peut pas drag&dropper peuvent
+		//interagir avec eux-même...
+		objSprite.events.onInputUp.add(function(obj) {
+			if (!obj.input.draggable) {
+				var source = obj.key+"/"+objets[obj.key].état;
+				try {
+					//Y-a-t-il une interaction de l'objet avec lui-même
+					interactions[source]['self'](objets[obj.key]);
+				} catch(err) {
+					console.log("Aucune interaction de "+source+" sur lui-même");
+				}
 			}
 		});
 	});
+
+	//Aide
+	game.input.keyboard.onDownCallback = function(e) {
+		if(e.keyCode == Phaser.Keyboard.SPACEBAR){
+			if (draggedSprite) {
+				//Surbrillance sur les cibles possibles
+				console.log("allumer les objets cibles");
+				var source = draggedSprite.key+"/"+objets[draggedSprite.key].état;
+				if (interactions[source]!=undefined) {
+					Object.keys(interactions[source]).forEach(function(obj) {
+						var objet = obj.split('/')[0];
+						var état = obj.split('/')[1];
+						if (objets[objet].état == état) {
+							//L'objet peut subir une interaction
+							spr = objets[objet].sprite;
+							spr.tint = 0x00FF00;
+							nextCibles.push(spr);
+						}
+					});
+				}
+			} else {
+				//Surbrillance sur le prochain objet à utiliser
+				//------------------------
+				/*Il faudrait scanner tous les objets de la scène et retenir ceux
+				pour lesquels une interaction est possible.
+				C'est très peu optimisé !
+				Comment résoudre ce soucis ?
+				Une solution consiste à avoir une représentation du scénario et un algo
+				qui la suive.
+				Une meileure solution est d'utiliser un algo de résolution qui, à partir
+				d'un but donné (le gateau cuit) puisse trouver les "verrous" de manière
+				récursive et construire un "arbre d'objectifs"
+				*/
+			}
+		}
+	}
+
+
+	game.input.keyboard.onUpCallback = function(e) {
+		if(e.keyCode == Phaser.Keyboard.SPACEBAR){
+			nextSources.tint = 0xffffff;
+			nextCibles.forEach(function(o) {
+				o.tint = 0xFFFFFF;
+			});
+			nextCibles.splice(0, nextCibles.length);
+		}
+
+	}
 }
 
 
