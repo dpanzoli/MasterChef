@@ -24,7 +24,7 @@ function preload() {
 	game.load.spritesheet('doseur', 'assets/verre_doseur.png', 60, 90, 2);
 
 	game.load.image('cuisine', 'assets/scène.png');
-	
+
 }
 
 var sprites;
@@ -190,7 +190,7 @@ var interactions = {
 		'cuisson/allumé': function(casserole, cuisson) {
 			game.time.events.add(Phaser.Timer.SECOND * 3, function() {
 				casserole.état='chaude'; casserole.sprite.frame=2;
-				
+
 			}, this);
 			casserole.x = 120; casserole.y = 230;
 		}
@@ -199,7 +199,7 @@ var interactions = {
 		'saladier/presqueTout': function(casserole, saladier) {
 			casserole.état='vide'; casserole.sprite.frame=0;
 			saladier.état='tout'; saladier.sprite.frame=7;
-		}		
+		}
 	},
 	'spatule/propre': {
 		'saladier/tout': function(spatule, saladier) {
@@ -236,7 +236,7 @@ var interactions = {
 				//fin de la recette
 				var text = game.add.text(game.world.centerX, game.world.height, "Bravo !\n Superbe pain d'épice !", { font: 'bold 48pt Arial'});
 				var grd = text.context.createLinearGradient(0, 0, 0, text.height);
-				grd.addColorStop(0, '#8CFFFF');   
+				grd.addColorStop(0, '#8CFFFF');
 				grd.addColorStop(1, '#2BFF60');
 				text.align = 'center';
 				text.fill = grd;
@@ -244,7 +244,7 @@ var interactions = {
 				text.strokeThickness = 5;
 				text.anchor.set(0.5,1);
 			}, this);
-			
+
 		}
 	},
 	'cuisson/éteint': {
@@ -254,7 +254,12 @@ var interactions = {
 	},
 };
 
-var nextSource, nextCible=[], draggedSprite;
+var recette = [
+	"doseur/plein",
+	"casse"
+]
+
+var nextSources=[], nextCibles=[], draggedSprite;
 
 function create() {
 
@@ -270,9 +275,9 @@ function create() {
 		game.physics.enable(objSprite, Phaser.Physics.ARCADE);
 		objSprite.inputEnabled = true;
 		objSprite.input.useHandCursor = true;
-		
-		nextSource = objSprite;
-		
+
+		nextSources = objSprite;
+
 		if (objData.mobile) objSprite.input.enableDrag(true);
 		//Gestion du drag&drop des objets pour les interactions entre
 		//un objet et un autre.
@@ -319,43 +324,53 @@ function create() {
 			}
 		});
 	});
-	
+
 	//Aide
 	game.input.keyboard.onDownCallback = function(e) {
-		if(e.keyCode == Phaser.Keyboard.SPACEBAR){  
+		if(e.keyCode == Phaser.Keyboard.SPACEBAR){
 			if (draggedSprite) {
 				//Surbrillance sur les cibles possibles
 				console.log("allumer les objets cibles");
 				var source = draggedSprite.key+"/"+objets[draggedSprite.key].état;
-				console.log(interactions[source]);
 				if (interactions[source]!=undefined) {
 					Object.keys(interactions[source]).forEach(function(obj) {
 						var objet = obj.split('/')[0];
 						var état = obj.split('/')[1];
 						if (objets[objet].état == état) {
-							//L'objet peut sublir une interaction
-							//TODO : stocker des ombres brillantes au lieu des objets. Au relachement, les détruire...
+							//L'objet peut subir une interaction
 							spr = objets[objet].sprite;
 							spr.tint = 0x00FF00;
-							spr.alpha = 1;
-							nextCible.push(spr);
+							nextCibles.push(spr);
 						}
 					});
 				}
-				
 			} else {
-				//Surbrillance sur le prochain objet
-				nextSource.tint = 0x00FF00;
-				nextSource.alpha = 1;
+				//Surbrillance sur le prochain objet à utiliser
+				//------------------------
+				/*Il faudrait scanner tous les objets de la scène et retenir ceux
+				pour lesquels une interaction est possible.
+				C'est très peu optimisé !
+				Comment résoudre ce soucis ?
+				Une solution consiste à avoir une représentation du scénario et un algo
+				qui la suive.
+				Une meileure solution est d'utiliser un algo de résolution qui, à partir
+				d'un but donné (le gateau cuit) puisse trouver les "verrous" de manière
+				récursive et construire un "arbre d'objectifs"
+				*/
 			}
 		}
 	}
-	
-	
+
+
 	game.input.keyboard.onUpCallback = function(e) {
-		if(e.keyCode == Phaser.Keyboard.SPACEBAR){ 
-			nextSource.tint = 0xffffff;
+		if(e.keyCode == Phaser.Keyboard.SPACEBAR){
+			nextSources.tint = 0xffffff;
+			nextCibles.forEach(function(o) {
+				o.tint = 0xFFFFFF;
+			});
+			nextCibles.splice(0, nextCibles.length);
 		}
+
 	}
 }
 
