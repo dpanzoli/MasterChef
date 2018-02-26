@@ -254,13 +254,12 @@ var interactions = {
 	},
 };
 
+var nextSource, nextCible=[], draggedSprite;
 
 function create() {
 
 	game.add.sprite(0, 0, 'cuisine');
 
-	
-	
 	sprites = game.add.group();
 
 	Object.keys(objets).forEach(function(objDataKey) {
@@ -270,10 +269,15 @@ function create() {
 		objData.sprite = objSprite;
 		game.physics.enable(objSprite, Phaser.Physics.ARCADE);
 		objSprite.inputEnabled = true;
+		objSprite.input.useHandCursor = true;
+		
+		nextSource = objSprite;
+		
 		if (objData.mobile) objSprite.input.enableDrag(true);
 		//Gestion du drag&drop des objets pour les interactions entre
 		//un objet et un autre.
 		objSprite.events.onDragStart.add(function(obj) {
+			draggedSprite = obj;
 			obj.bringToTop();
 			obj.retourne = function() {
 				game.add.tween(obj).to(
@@ -285,6 +289,7 @@ function create() {
 			}
 		}, this);
 		objSprite.events.onDragStop.add(function(obj) {
+			draggedSprite = null;
 			game.physics.arcade.overlap(obj, sprites, function(me, other) {
 				var source = me.key+"/"+objets[me.key].état;
 				var cible = other.key+"/"+objets[other.key].état
@@ -314,6 +319,44 @@ function create() {
 			}
 		});
 	});
+	
+	//Aide
+	game.input.keyboard.onDownCallback = function(e) {
+		if(e.keyCode == Phaser.Keyboard.SPACEBAR){  
+			if (draggedSprite) {
+				//Surbrillance sur les cibles possibles
+				console.log("allumer les objets cibles");
+				var source = draggedSprite.key+"/"+objets[draggedSprite.key].état;
+				console.log(interactions[source]);
+				if (interactions[source]!=undefined) {
+					Object.keys(interactions[source]).forEach(function(obj) {
+						var objet = obj.split('/')[0];
+						var état = obj.split('/')[1];
+						if (objets[objet].état == état) {
+							//L'objet peut sublir une interaction
+							//TODO : stocker des ombres brillantes au lieu des objets. Au relachement, les détruire...
+							spr = objets[objet].sprite;
+							spr.tint = 0x00FF00;
+							spr.alpha = 1;
+							nextCible.push(spr);
+						}
+					});
+				}
+				
+			} else {
+				//Surbrillance sur le prochain objet
+				nextSource.tint = 0x00FF00;
+				nextSource.alpha = 1;
+			}
+		}
+	}
+	
+	
+	game.input.keyboard.onUpCallback = function(e) {
+		if(e.keyCode == Phaser.Keyboard.SPACEBAR){ 
+			nextSource.tint = 0xffffff;
+		}
+	}
 }
 
 </script>
