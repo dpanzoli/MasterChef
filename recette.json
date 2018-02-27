@@ -5,7 +5,7 @@ A*B implique une interaction entre les 2 objets A et B
 A tout seul implique une interaction réflexive
 ---
 Dans la recette, il y a volontairement plusieurs chemins possibles mais à ce stade,
-aucun chemin n'est mieux qu'un autre. 
+aucun chemin n'est mieux qu'un autre.
 Exemple: la farine peut être versée dans le saladier ou dans le doseur...
 */
 
@@ -37,5 +37,5 @@ recette = [
 	{
 		lib: "Sortir le pain d'épice du four",
 		rule: "four/cuisson*four/cuisson=four/allumé*moule/cuit"
-	},
+	}
 ]
