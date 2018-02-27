@@ -1,0 +1,120 @@
+var objets = {
+	oeuf: {
+		nom: 'oeuf',
+		type: 'ingrédient',
+		états: ['frais','cassé'],
+		état: 'frais',
+		x:150,
+		y:410,
+		mobile: true
+	},
+	lait: {
+		nom: 'lait',
+		type: 'ingrédient',
+		états: ['plein','entamé','presqueVide','vide'],
+		état: 'plein',
+		x: 680,
+		y: 410,
+		mobile: true
+	},
+	farine: {
+		nom: 'farine',
+		type: 'ingrédient',
+		états: ['neuf','entamé'],
+		état: 'neuf',
+		x: 210,
+		y: 410,
+		mobile: true
+	},
+	saladier: {
+		nom: 'saladier',
+		type: 'ustensile',
+		états: ['propre', 'mélangé', 'sale', 'blanc', 'oeuf', 'épice', 'presqueTout', 'tout'],
+		état: 'propre',
+		contenu: [],
+		x: 400,
+		y: 410,
+		mobile: false
+	},
+	moule: {
+		nom: 'moule',
+		type: 'ustensile',
+		états: ['vide','plein','cuit'],
+		état: 'vide',
+		x: 550,
+		y: 450,
+		mobile: true
+	},
+	spatule: {
+		nom: 'spatule',
+		type: 'ustensile',
+		états: ['propre', 'sale'],
+		état: 'propre',
+		x: 350,
+		y: 460,
+		mobile: true
+	},
+	four: {
+		nom: 'four',
+		type: 'électroménager',
+		états: ['éteint', 'allumé', 'cuisson'],
+		état: 'éteint',
+		x: 680,
+		y: 260,
+		mobile: false
+	},
+	cuisson: {
+		nom: 'cuisson',
+		type: 'électroménager',
+		états: ['éteint', 'allumé'],
+		état: 'éteint',
+		x: 150,
+		y: 250,
+		mobile: false
+	},
+	sucre: {
+		nom: 'sucre',
+		type: 'ingrédient',
+		états: ['plein'],
+		état: 'plein',
+		x: 70,
+		y: 420,
+		mobile: true
+	},
+	miel: {
+		nom: 'miel',
+		type: 'ingrédient',
+		états: ['plein'],
+		état: 'plein',
+		x: 130,
+		y: 470,
+		mobile: true
+	},
+	casserole: {
+		nom: 'casserole',
+		type: 'ustensile',
+		états: ['vide', 'pleine', 'chaude'],
+		état: 'vide',
+		x: 680,
+		y: 470,
+		mobile: true
+	},
+	épices: {
+		nom: 'épices',
+		type: 'ingrédient',
+		états: ['plein'],
+		état: 'plein',
+		x: 180,
+		y: 470,
+		mobile: true
+	},
+	doseur: {
+		nom: 'doseur',
+		type: 'ustensile',
+		états: ['vide', 'plein'],
+		état: 'vide',
+		x: 270,
+		y: 470,
+		mobile: true
+	},
+}
