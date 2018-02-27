@@ -145,7 +145,7 @@ objets = {
 		états: ['vide', 'pleine', 'chaude'],
 		état: 'vide',
 		x: 680,
-		y: 490,
+		y: 485,
 		image: {
 			src: 'assets/casserole.png',
 			dimX: 90,

@@ -15,6 +15,8 @@ function preload() {
 		game.load.spritesheet(o.nom, o.image.src, o.image.dimX, o.image.dimY, o.image.clés);
 		
 	});
+	
+	game.load.image('cuisine', 'assets/scène.png');
 }
 
 var ingredients;
@@ -24,7 +26,8 @@ var commande;
 
 function create() {
 
-	game.stage.backgroundColor = "#dedede";
+	game.add.sprite(0, 0, 'cuisine');
+
 
     var style = { font: "32px Arial", fill: "#000000", align: "left" };
     commande = game.add.text(10, game.world.height-32-10, "", style);

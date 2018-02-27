@@ -7,7 +7,6 @@ A tout seul implique une interaction réflexive
 Dans la recette, il y a volontairement plusieurs chemins possibles mais à ce stade,
 aucun chemin n'est mieux qu'un autre. 
 Exemple: la farine peut être versée dans le saladier ou dans le doseur...
-
 */
 
 recette = [
@@ -103,17 +102,5 @@ recette = [
 	{
 		lib: "Eteindre le four",
 		rule: "four/allumé*four/allumé=four/éteint"
-	},
-	
+	}	
 ]
-
-recetteOLD = [
-	"oeuf/frais*saladier/propre|plein=oeuf/cassé*saladier/plein", "farine/neuf|entamé*saladier/propre|plein=farine/entamé*saladier/plein",
-	"lait/plein*saladier/propre|plein=lait/entamé*saladier/plein",
-	"lait/entamé*saladier/propre|plein=lait/presqueVide*saladier/plein",
-	"lait/presqueVide*saladier/propre|plein=lait/vide*saladier/plein",
-	"spatule/propre*saladier/plein=spatule/sale*saladier/mélangé",
-	"saladier/mélangé*moule/vide=saladier/sale*moule/plein",
-	"moule/plein*four/allumé=moule/cuit"
-]
-
