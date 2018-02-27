@@ -1,9 +1,119 @@
+/*
+La recette est représentée par une liste de règles de transformation dur type préconditions=postconditions
+Pour les préconditions:
+A*B implique une interaction entre les 2 objets A et B
+A tout seul implique une interaction réflexive
+---
+Dans la recette, il y a volontairement plusieurs chemins possibles mais à ce stade,
+aucun chemin n'est mieux qu'un autre. 
+Exemple: la farine peut être versée dans le saladier ou dans le doseur...
+
+*/
+
 recette = [
-	"oeuf(frais)*saladier(propre|plein)=oeuf(cassé)*saladier(plein)", "farine(neuf|entamé)*saladier(propre|plein)=farine(entamé)*saladier(plein)",
-	"lait(plein)*saladier(propre|plein)=lait(entamé)*saladier(plein)",
-	"lait(entamé)*saladier(propre|plein)=lait(presqueVide)*saladier(plein)",
-	"lait(presqueVide)*saladier(propre|plein)=lait(vide)*saladier(plein)",
-	"spatule(propre)*saladier(plein)=spatule(sale)*saladier(mélangé)",
-	"saladier(mélangé)*moule(vide)=saladier(sale)*moule(plein)",
-	"moule(plein)*four(allumé)=moule(cuit)"
+	{
+		lib: "Mettre la farine dans le saladier",
+		rule: "farine/neuf|entamé*saladier/propre=farine/entamé*saladier/blanc"
+	},
+	{
+		lib: "Mettre la farine dans le verre doseur",
+		rule: "farine/neuf|entamé*doseur/vide=farine/entamé*doseur/plein"
+	},
+	{
+		lib: "Verser le verre doseur dans le saladier",
+		rule: "doseur/plein*saladier/propre=doseur/vide*saladier/blanc"
+	},
+	{
+		lib: "Ajouter le sucre dans le saladier",
+		rule: "sucre/plein*saladier/propre=saladier/blanc"
+	},
+	{
+		lib: "Ajouter le sucre dans le saladier",
+		rule: "sucre/plein*saladier/blanc|oeuf|épice|presqueTout|tout=sucre/plein"
+	},
+	{
+		lib: "Ajouter les oeufs dans le saladier",
+		rule: "oeuf/frais*saladier/blanc=saladier/oeuf*oeuf/cassé"
+	},
+	{
+		lib: "Ajouter les oeufs dans le saladier",
+		rule: "oeuf/frais*saladier/épice=saladier/presqueTout*oeuf/cassé"
+	},
+	{
+		lib: "Ajouter les épices dans le saladier",
+		rule: "épices/plein*saladier/blanc=saladier/épice"
+	},
+	{
+		lib: "Ajouter les épices dans le saladier",
+		rule: "épices/plein*saladier/oeuf=saladier/presqueTout"
+	},
+	{
+		lib: "Ajouter le lait",
+		rule: "lait/plein*saladier/presqueTout=saladier/tout*lait/entamé"
+	},
+	{
+		lib: "Ajouter le lait",
+		rule: "casserole/pleine*saladier/presqueTout=saladier/tout*casserole/vide"
+	},
+	{
+		lib: "Ajouter le lait tiédi",
+		rule: "casserole/chaude*saladier/presqueTout=saladier/tout*casserole/vide"
+	},
+	{
+		lib: "Allumer la plaque de cuisson",
+		rule: "cuisson/éteint*cuisson/éteint=cuisson/allumé"
+	},
+	{
+		lib: "Eteindre la plaque de cuisson",
+		rule: "cuisson/allumé*cuisson/allumé=cuisson/éteint"
+	},
+	{
+		lib: "Verser le lait dans la casserole",
+		rule: "lait/plein*casserole/vide=casserole/pleine*lait/entamé"
+	},
+	{
+		lib: "Faire tiédir le lait",
+		rule: "casserole/pleine*cuisson/allumé=casserole/chaude"
+	},
+	{
+		lib: "Ajouter le miel",
+		rule: "miel/plein*saladier/tout=miel/plein"
+	},
+	{
+		lib: "Mélanger le saladier",
+		rule: "spatule/propre|sale*saladier/tout=saladier/mélangé*spatule/sale"
+	},
+	{
+		lib: "Verser le saladier dans le moule",
+		rule: "saladier/mélangé*moule/vide=saladier/sale*moule/plein"
+	},
+	{
+		lib: "Allumer le four",
+		rule: "four/éteint*four/éteint=four/allumé"
+	},
+	{
+		lib: "Enfourner la préparation",
+		rule: "moule/plein*four/allumé=four/cuisson*moule/auFour"
+	},
+	{
+		lib: "Sortir le pain d'épice du four",
+		rule: "four/cuisson*four/cuisson=four/allumé*moule/cuit"
+	},
+	
+	{
+		lib: "Eteindre le four",
+		rule: "four/allumé*four/allumé=four/éteint"
+	},
+	
 ]
+
+recetteOLD = [
+	"oeuf/frais*saladier/propre|plein=oeuf/cassé*saladier/plein", "farine/neuf|entamé*saladier/propre|plein=farine/entamé*saladier/plein",
+	"lait/plein*saladier/propre|plein=lait/entamé*saladier/plein",
+	"lait/entamé*saladier/propre|plein=lait/presqueVide*saladier/plein",
+	"lait/presqueVide*saladier/propre|plein=lait/vide*saladier/plein",
+	"spatule/propre*saladier/plein=spatule/sale*saladier/mélangé",
+	"saladier/mélangé*moule/vide=saladier/sale*moule/plein",
+	"moule/plein*four/allumé=moule/cuit"
+]
+

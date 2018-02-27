@@ -10,7 +10,7 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, 'MasterChef v1', { preload: pr
 
 function preload() {
 
-	Object.values(scene).forEach(function (o) {
+	Object.values(objets).forEach(function (o) {
 		if (o.image)
 		game.load.spritesheet(o.nom, o.image.src, o.image.dimX, o.image.dimY, o.image.clés);
 		
@@ -20,13 +20,19 @@ function preload() {
 var ingredients;
 var scene, interactions;
 
+var commande;
+
 function create() {
 
 	game.stage.backgroundColor = "#dedede";
 
+    var style = { font: "32px Arial", fill: "#000000", align: "left" };
+    commande = game.add.text(10, game.world.height-32-10, "", style);
+	
+	
 	//Création de l'index principal pour permettre de retrouver facilement
 	//les interactions attachées à un objet (source)
-	interactions = {};
+/*	interactions = {};
 	recette.forEach(function(interaction) {
 		var obj = interaction.preconditions.source.obj;
 		var libétats = interaction.preconditions.source.état;
@@ -49,41 +55,144 @@ function create() {
 			}
 		});
 	});
-
+*/	
+	var interactions = {};
+	recette.forEach(function(step) {
+		//Parsing
+		var lib = step.lib;
+		var tabRule = step.rule.split("=");
+		var tabPrec = tabRule[0].split("*");
+		var tabPostc = tabRule[1].split("*");
+		var tabA = tabPrec[0].split("/");
+		var tabB = tabPrec[1].split("/");
+		var A = tabA[0]; 
+		var Astates = tabA[1].split("|");
+		var B = tabB[0];
+		var Bstates = tabB[1].split("|");
+		
+		//Assemblage des règles
+		Astates.forEach(function(Astate) {
+			var ruleA = A+"/"+Astate;
+			Bstates.forEach(function(Bstate) {
+				var ruleB = B+"/"+Bstate;
+				if (interactions[ruleA] == undefined) interactions[ruleA] = {};
+				interactions[ruleA][ruleB] = {
+					commande: lib,
+					postc : tabRule[1]
+				};
+			});
+		});
+		
+		
+	});
+	
+	console.log(interactions);
+	
+	var selectionPrec = null;
+	
 	//Création des objets dans la scène
 	//Affectation du comportement drag&drop
 	//Référencement des sprites dans la scene
-	ingredients = game.add.group();
-	Object.keys(scene).forEach(function(key) {
-		var objet = scene[key];
-		ingredient = ingredients.create(objet.x, objet.y, objet.nom, objet.état);
-		objet.sprite = ingredient;
-		ingredient.anchor.setTo(0.5,1);
-		game.physics.enable(ingredient, Phaser.Physics.ARCADE);
-		if (interactions[objet.nom]) {
-			ingredient.inputEnabled = true;
-			ingredient.input.enableDrag(true);
-		}
-		ingredient.events.onDragStart.add(function(obj) {
-			obj.bringToTop();
-			obj.retourne = function() {
-				game.add.tween(obj).to(
-					{ x:objet.x, y:objet.y}, 
-					1000, 
-					Phaser.Easing.Circular.Out,
-					true
-				);
+	objetsGroup = game.add.group();
+	Object.keys(objets).forEach(function(key) {
+		var objet = objets[key];
+		var état = objet.états.indexOf(objet.état);
+		objet.sprite = objetsGroup.create(objet.x, objet.y, objet.nom, état);
+		objet.sprite.anchor.setTo(0.5,1);
+		game.physics.enable(objet.sprite, Phaser.Physics.ARCADE);
+		objet.sprite.inputEnabled = true;
+		objet.sprite.input.useHandCursor = true;
+		objet.sprite.events.onInputUp.add(function(obj) {
+			//Est-ce qu'on commence ou termine une interaction ?
+			var selection = obj.key+"/"+objets[obj.key].état;
+			if (!selectionPrec) {
+				if (interactions[selection]) {
+					Object.keys(interactions[selection]).forEach(function(o) {
+						//ip = interaction possible (si état correspond)
+						var ip = {objKey: o.split("/")[0], état:o.split("/")[1]} 
+						//Vérifier si interaction réflexive
+						if (ip.objKey == key) {
+							action = interactions[selection][o];
+						}
+					});
+				}
+				if (action) {
+					appliquer(action);
+				} else {
+					//Attendre la cible de l'interaction
+					message("Utiliser "+key+" avec", false, true);
+					selectionPrec = key;
+				}
+			} else {
+				//On poursuit une interaction entamée
+				var A = selectionPrec+"/"+objets[selectionPrec].état;
+				if (interactions[A] && interactions[A][selection]) {
+					var action = interactions[A][selection];
+					//Application des post-conditions
+					appliquer(action);
+					selectionPrec = null;
+				} else {
+					//interaction ratée.
+					message('Ça ne marche pas', true);
+					selectionPrec = null;
+				}
+				
 			}
 		});
-		ingredient.events.onDragStop.add(function(obj) {
-			if (!game.physics.arcade.overlap(obj, ingredients, interaction)) {
-				obj.retourne();
+		objet.sprite.events.onInputOver.add(function (obj) {
+			if (!selectionPrec) {
+				message("Utiliser "+obj.key);
+			} else {
+				message("Utiliser "+selectionPrec+" avec "+obj.key);
+			}
+			
+		});
+		objet.sprite.events.onInputOut.add(function (obj) {
+			if (selectionPrec) {
+				message("Utiliser "+selectionPrec+" avec");
+			} else {
+				message("");
 			}
 		});
+		
 	});
 }
 
+var historique = [];
 
+function appliquer(action) {
+	action.postc.split('*').forEach(function(p) {
+		var tabP = p.split('/');
+		var obj = tabP[0];
+		var état = tabP[1];
+		objets[obj].état = état;
+		var frame = objets[obj].états.indexOf(état);
+		objets[obj].sprite.frame = frame;
+	});
+	//Message utilisateur
+	message(action.commande, true);
+	historique.push(action.commande);
+}
+
+
+function message(texte, secondes, priorité) {
+	if (priorité) {
+		commande.setText(texte);
+		secondes.lock = false;
+	}
+	if (!commande.lock) commande.setText(texte);
+	if (secondes) {
+		commande.lock = true;
+		game.time.events.add(Phaser.Timer.SECOND * 1.5, function() {
+			commande.setText("");
+			commande.lock = null;
+		}, this);
+	}
+
+}
+
+
+/*
 function interaction(me, other) {
 	//Je veux trouver rapidement les interactions dont me.key est la source.
 	//Je dois disposer d'un index, qui est construit lors du parsing de la recette.
@@ -126,5 +235,6 @@ function interaction(me, other) {
 	}
 	me.retourne();
 }
+*/
 </script>
 </html>
