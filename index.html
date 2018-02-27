@@ -4,6 +4,7 @@
 <script src="phaser.min.js"></script>
 <script src="objets.json"></script>
 <script src="recette.json"></script>
+<script src="objectifs.json"></script>
 <script language="javascript">
 
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'MasterChef v1', { preload: preload, create: create });
@@ -28,9 +29,11 @@ function create() {
 
 	game.add.sprite(0, 0, 'cuisine');
 
-
     var style = { font: "32px Arial", fill: "#000000", align: "left" };
     commande = game.add.text(10, game.world.height-32-10, "", style);
+	
+	var style = { font: "32px Arial", fill: "#ff0000", align: "left" };
+    accompagnement = game.add.text(10, 10, "", style);
 	
 	var interactions = {};
 	recette.forEach(function(step) {
@@ -61,11 +64,8 @@ function create() {
 		
 		
 	});
-	
-	console.log(interactions);
-	
+		
 	var selectionPrec = null;
-	
 	//Création des objets dans la scène
 	//Affectation du comportement drag&drop
 	//Référencement des sprites dans la scene
@@ -114,6 +114,7 @@ function create() {
 				}
 				
 			}
+			testObjectif();
 		});
 		objet.sprite.events.onInputOver.add(function (obj) {
 			if (!selectionPrec) {
@@ -132,6 +133,17 @@ function create() {
 		});
 		
 	});
+	
+	testObjectif();
+}
+
+function testObjectif() {
+	if (objectif.évaluer()) {
+		accompagnement.setText("Objectif atteint ! Bravo !");
+	} else {
+		var sous_objectifs = objectif.atteignables();
+		accompagnement.setText(sous_objectifs[0].action);
+	}
 }
 
 var historique = [];

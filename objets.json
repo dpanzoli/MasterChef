@@ -13,20 +13,6 @@ objets = {
 			clés: 2
 		}
 	},
-	lait: {
-		nom: "lait",
-		type: "ingrédient",
-		états: ["plein","entamé","presqueVide","vide"],
-		état: "plein",
-		x: 680, 
-		y: 410,
-		image: {
-			src: 'assets/lait.png',
-			dimX: 60,
-			dimY: 120,
-			clés: 4
-		}
-	},
 	farine: {
 		nom: "farine",
 		type: "ingrédient",
@@ -95,90 +81,6 @@ objets = {
 			dimX: 180,
 			dimY: 180,
 			clés: 3
-		}
-	},
-	cuisson: {
-		nom: 'cuisson',
-		type: 'électroménager',
-		états: ['éteint', 'allumé'],
-		état: 'éteint',
-		x: 150,
-		y: 250,
-		image: {
-			src: 'assets/cuisson.png',
-			dimX: 180,
-			dimY: 60,
-			clés: 2
-		}
-	},
-	sucre: {
-		nom: 'sucre',
-		type: 'ingrédient',
-		états: ['plein'],
-		état: 'plein',
-		x: 70,
-		y: 420,
-		image: {
-			src: 'assets/sucre.png',
-			dimX: 60,
-			dimY: 90,
-			clés: 1
-		}
-	},
-	miel: {
-		nom: 'miel',
-		type: 'ingrédient',
-		états: ['plein'],
-		état: 'plein',
-		x: 130,
-		y: 470,
-		image: {
-			src: 'assets/miel.png',
-			dimX: 40,
-			dimY: 40,
-			clés: 1
-		}
-	},
-	casserole: {
-		nom: 'casserole',
-		type: 'ustensile',
-		états: ['vide', 'pleine', 'chaude'],
-		état: 'vide',
-		x: 680,
-		y: 485,
-		image: {
-			src: 'assets/casserole.png',
-			dimX: 90,
-			dimY: 90,
-			clés: 3
-		}
-	},
-	épices: {
-		nom: 'épices',
-		type: 'ingrédient',
-		états: ['plein'],
-		état: 'plein',
-		x: 180,
-		y: 470,
-		image: {
-			src: 'assets/épices.png',
-			dimX: 20,
-			dimY: 40,
-			clés: 1
-		}
-	},
-	doseur: {
-		nom: 'doseur',
-		type: 'ustensile',
-		états: ['vide', 'plein'],
-		état: 'vide',
-		x: 270,
-		y: 470,
-		image: {
-			src: 'assets/verre_doseur.png',
-			dimX: 60,
-			dimY: 90,
-			clés: 2
 		}
 	},
 }

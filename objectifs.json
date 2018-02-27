@@ -1,0 +1,72 @@
+var NoeudObjectif = function(objet, état, action) {
+	
+	this.objet = objet;
+	this.état = état;
+	this.action = action;
+	this.fils = [];
+	this.accompli = false;
+	
+	this.ajouterSousObjectif = function(f) {
+		this.fils.push(f);
+	}
+	
+	this.toString = function(sep) {
+		if (!sep) sep="";
+		var out = sep + this.objet+"/"+this.état+' ('+this.évaluer()+','+this.atteignable()+')\n';
+		if (this.fils) {
+			sep += "  "
+			this.fils.forEach(function(o) {
+				out += o.toString(sep);
+			});
+		}
+		return out;
+	}
+	
+	this.évaluer = function() {
+		if (objets[this.objet].état == this.état) {
+			this.accompli = true;
+			return true;
+		}
+		return false;
+	}
+
+	this.atteignable = function() {
+		if (this.accompli) return false;
+		var flag = true;
+		this.fils.forEach(function(f) {
+			if (!f.évaluer()) flag=false;
+		});
+		return !this.évaluer() && flag;
+	}
+	
+	this.atteignables = function() {
+		var att = [];
+		if (this.atteignable()) {
+			att.push(this);
+		}
+		this.fils.forEach(function(f) {
+			att = att.concat(f.atteignables());
+		});
+		return att;
+	}
+};
+
+var objectif = new NoeudObjectif("moule", "cuit", "Sortir le pain d'épice du four");
+
+var fourcuisson = new NoeudObjectif("four", "cuisson", "Enfourner la préparation");
+objectif.ajouterSousObjectif(fourcuisson);
+
+var fourallumé = new NoeudObjectif("four", "allumé", "Allumer le four");
+fourcuisson.ajouterSousObjectif(fourallumé);
+
+var mouleplein = new NoeudObjectif("moule", "plein", "Verser le saladier dans le moule");
+fourcuisson.ajouterSousObjectif(mouleplein);
+
+var saladiermélangé = new NoeudObjectif("saladier", "mélangé", "Mélanger le saladier");
+mouleplein.ajouterSousObjectif(saladiermélangé);
+
+var saladieroeuf = new NoeudObjectif("saladier", "oeuf", "Ajouter les oeufs dans le saladier");
+saladiermélangé.ajouterSousObjectif(saladieroeuf);
+
+var saladierblanc = new NoeudObjectif("saladier", "blanc", "Mettre la farine dans le saladier");
+saladieroeuf.ajouterSousObjectif(saladierblanc);
