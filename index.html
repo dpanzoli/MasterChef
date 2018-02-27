@@ -29,33 +29,6 @@ function create() {
     var style = { font: "32px Arial", fill: "#000000", align: "left" };
     commande = game.add.text(10, game.world.height-32-10, "", style);
 	
-	
-	//Création de l'index principal pour permettre de retrouver facilement
-	//les interactions attachées à un objet (source)
-/*	interactions = {};
-	recette.forEach(function(interaction) {
-		var obj = interaction.preconditions.source.obj;
-		var libétats = interaction.preconditions.source.état;
-		//Il peut y avoir un ou plusieurs états initiaux
-		//Je simplifie en regroupant les 2 cas.
-		if (!(libétats instanceof Array)) libétats = [ libétats ];
-		libétats.forEach(function(libétat) {
-			var état = scene[obj].états.indexOf(libétat);
-			if (!(obj in interactions)) {
-				interactions[obj] = {};
-				interactions[obj][état] = [];
-				interactions[obj][état].push(interaction);
-			} else {
-				if (!(état in interactions[obj])) {
-					interactions[obj][état] = [];
-					interactions[obj][état].push(interaction);
-				} else {
-					interactions[obj][état].push(interaction);
-				}
-			}
-		});
-	});
-*/	
 	var interactions = {};
 	recette.forEach(function(step) {
 		//Parsing
@@ -191,50 +164,5 @@ function message(texte, secondes, priorité) {
 
 }
 
-
-/*
-function interaction(me, other) {
-	//Je veux trouver rapidement les interactions dont me.key est la source.
-	//Je dois disposer d'un index, qui est construit lors du parsing de la recette.
-	var interactionsDisponibles = interactions[me.key][me.frame];
-	if (interactionsDisponibles) {
-		interactionsDisponibles.forEach(function(inter) {
-			//Pour chaque interaction disponible pour cette source dans cet état
-			//Je cherche si l'objet cible dans son état est une cible de l'interaction
-			var ciblePossible = inter.preconditions.cible.obj;
-			var ciblePossibleEtat = inter.preconditions.cible.état;
-			//objet actuellement ciblé par l'interaction
-			var cibleActuelle = other.key;
-			var cibleActuelleEtat = scene[other.key].états[other.frame];
-			var interactionPossible = false;
-			if (ciblePossibleEtat instanceof Array) {
-				//Cas de l'interaction dans plusieurs états
-				if (
-					ciblePossibleEtat.indexOf(cibleActuelleEtat)!=-1 && 
-					cibleActuelle==ciblePossible
-				) interactionPossible = true;
-			} else {
-				//Cas de l'interaction à un seul état
-				if (
-					ciblePossibleEtat==cibleActuelleEtat &&
-					ciblePossible==cibleActuelle
-				) interactionPossible = true;
-			}
-			if (interactionPossible) {
-				//Application des postconditions
-				inter.postconditions.forEach(function(postc) {
-					var obj = postc.obj;
-					var nouvelEtat = scene[postc.obj].états.indexOf(postc.état);
-					scene[obj].état = nouvelEtat;
-					scene[obj].sprite.frame = nouvelEtat;
-				});
-				console.log(scene);
-				return; //car a priori l'interaction est unique, donc pas la peine de continuer
-			}
-		});
-	}
-	me.retourne();
-}
-*/
 </script>
 </html>
