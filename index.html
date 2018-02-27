@@ -7,7 +7,7 @@
 <script src="objectifs.json"></script>
 <script language="javascript">
 
-var game = new Phaser.Game(800, 600, Phaser.AUTO, 'MasterChef v1', { preload: preload, create: create });
+var game = new Phaser.Game(800, 600, Phaser.AUTO, 'MasterChef v1', { preload: preload, create: create});
 
 function preload() {
 
@@ -18,6 +18,7 @@ function preload() {
 	});
 	
 	game.load.image('cuisine', 'assets/scène.png');
+	game.load.image('bulle', 'Assets/bulle.png');
 }
 
 var ingredients;
@@ -29,11 +30,17 @@ function create() {
 
 	game.add.sprite(0, 0, 'cuisine');
 
+	game.add.sprite(0, 0, 'bulle');
+	var style = { font: "24px Arial", fill: "#002060", 
+        align: "left",
+        boundsAlignH: "left", 
+        boundsAlignV: "top", 
+        wordWrap: true, wordWrapWidth: 300 };
+    accompagnement = game.add.text(0, 0, "", style);
+    accompagnement.setTextBounds(38, 19, 314, 78);
+	
     var style = { font: "32px Arial", fill: "#000000", align: "left" };
     commande = game.add.text(10, game.world.height-32-10, "", style);
-	
-	var style = { font: "32px Arial", fill: "#ff0000", align: "left" };
-    accompagnement = game.add.text(10, 10, "", style);
 	
 	var interactions = {};
 	recette.forEach(function(step) {
