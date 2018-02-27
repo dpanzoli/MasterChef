@@ -5,7 +5,7 @@
 <script
 <script language="javascript">
 
-var game = new Phaser.Game(800, 600, Phaser.AUTO, 'MasterChef v1', { preload: preload, create: create });
+var game = new Phaser.Game(800, 600, Phaser.AUTO, 'MasterChef v1', { preload: preload, create: create, render:render });
 
 var sprites;
 
@@ -166,6 +166,18 @@ var interactions = {
 	}
 };
 
+var rect = new Phaser.Rectangle( 0, 0, 800, 180 ) ;
+
+function render() {
+    game.debug.geom( rect, 'rgba(0,0,0,1)' ) ;
+	
+	Object.keys(objets).forEach(function(f,i) {
+		game.debug.text(f+" : "+objets[f].état, 10, 20+ i * 20);
+	});
+	game.debug.text("doseur : "+objets["doseur"].contenu, 10, 150);
+	game.debug.text("saladier : "+objets["saladier"].contenu, 10, 170);
+}
+
 
 function preload() {
 
@@ -189,8 +201,8 @@ function preload() {
 
 function create() {
 
-	game.add.sprite(0, 0, 'cuisine');
-
+	//game.add.sprite(0, 0, 'cuisine');
+	game.stage.backgroundColor = "#dedede";
 	
 	
 	sprites = game.add.group();
