@@ -1,0 +1,100 @@
+scene = {
+	oeuf: {	
+		nom: "oeuf",
+		type: "ingrédient",
+		états: ["frais","cassé"],
+		état: 0,
+		x:100,
+		y:400,
+		image: {
+			src: "assets/oeuf.png",
+			dimX: 60,
+			dimY: 60,
+			clés: 2
+		}
+	},
+	lait: {
+		nom: "lait",
+		type: "ingrédient",
+		états: ["plein","entamé","presqueVide","vide"],
+		état: 0,
+		x: 160, 
+		y: 400,
+		image: {
+			src: 'assets/lait.png',
+			dimX: 60,
+			dimY: 120,
+			clés: 4
+		}
+	},
+	farine: {
+		nom: "farine",
+		type: "ingrédient",
+		états: ["neuf","entamé"],
+		état: 0,
+		x: 220,
+		y: 400,
+		image: {
+			src: 'assets/farine.png',
+			dimX: 60,
+			dimY: 90,
+			clés: 2
+		}
+	},
+	spatule: {
+		nom: "cuillère",
+		type: "ustensile",
+		états: ["propre", "sale"],
+		état: 0,
+		x: 400,
+		y: 500,
+		image: {
+			src: 'assets/spatule.png',
+			dimX: 90,
+			dimY: 60,
+			clés: 2
+		}
+	},
+	saladier: {
+		nom: "saladier",
+		type: "ustensile",
+		états: ["propre", "mélangé", "sale", "plein"],
+		état: 0,
+		x: 600,
+		y: 500,
+		image: {
+			src: 'assets/saladier.png',
+			dimX: 120,
+			dimY: 60,
+			clés: 8
+		}
+	},
+	moule: {
+		nom: "moule",
+		type: "ustensile",
+		états: ["vide", "plein", "cuit"],
+		état: 0,
+		x: 450,
+		y: 400,
+		image: {
+			src: 'assets/moule.png',
+			dimX: 120,
+			dimY: 90,
+			clés: 3
+		}
+	},
+	four: {
+		nom: "four",
+		type: "",
+		états: ["éteint", "allumé"],
+		état: 1,
+		x: 600,
+		y: 250,
+		image: {
+			src: 'assets/four.png',
+			dimX: 180,
+			dimY: 180,
+			clés: 3
+		}
+	}
+}

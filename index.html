@@ -2,24 +2,19 @@
 <html>
 <meta charset="UTF-8">
 <script src="phaser.min.js"></script>
-<script
+<script src="objets.json"></script>
+<script src="recette.json"></script>
 <script language="javascript">
 
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'MasterChef v1', { preload: preload, create: create });
 
 function preload() {
 
-	game.load.spritesheet('saladier', 'assets/saladier.png', 120, 60, 4);
-	game.load.spritesheet('moule', 'assets/moule.png', 120, 60, 3);
-	game.load.spritesheet('oeuf', 'assets/oeuf.png', 60, 60, 2);
-	game.load.spritesheet('lait', 'assets/lait.png', 60, 120, 4);
-	game.load.spritesheet('farine', 'assets/farine.png', 60, 90, 2);
-	game.load.spritesheet('cuillère', 'assets/cuillère.png', 90, 60, 2);
-	game.load.spritesheet('four', 'assets/four.png', 180, 180, 2);
-	
-	//Preload game data
-	game.load.json('scene', 'scène.json');
-	game.load.json('recette', 'recette.json');
+	Object.values(scene).forEach(function (o) {
+		if (o.image)
+		game.load.spritesheet(o.nom, o.image.src, o.image.dimX, o.image.dimY, o.image.clés);
+		
+	});
 }
 
 var ingredients;
@@ -29,14 +24,10 @@ function create() {
 
 	game.stage.backgroundColor = "#dedede";
 
-	scene = game.cache.getJSON('scene');
-	
-	//Parsing de la recette
-	var recetteData = game.cache.getJSON('recette');
 	//Création de l'index principal pour permettre de retrouver facilement
 	//les interactions attachées à un objet (source)
 	interactions = {};
-	recetteData.forEach(function(interaction) {
+	recette.forEach(function(interaction) {
 		var obj = interaction.preconditions.source.obj;
 		var libétats = interaction.preconditions.source.état;
 		//Il peut y avoir un ou plusieurs états initiaux

@@ -1,89 +1,9 @@
-[
-	{
-		"rule": "oeuf(frais)*saladier(propre|plein)=oeuf(cassé)*saladier(plein)",
-		"preconditions": {
-			"source":	{"obj": "oeuf", "état":"frais"},
-			"cible":	{"obj": "saladier", "état":["propre", "plein"]}
-		},
-		"postconditions": [
-			{"obj": "oeuf", "état": "cassé"},
-			{"obj": "saladier", "état": "plein"}
-		]
-	},
-	{
-		"rule": "farine(neuf|entamé)*saladier(propre|plein)=farine(entamé)*saladier(plein)",
-		"preconditions": {
-			"source":	{"obj": "farine", "état":["neuf", "entamé"]},
-			"cible":	{"obj": "saladier", "état":["propre", "plein"]}
-		},
-		"postconditions": [
-			{"obj": "farine", "état": "entamé"},
-			{"obj": "saladier", "état": "plein"}
-		]
-	},
-	{
-		"rule": "lait(plein)*saladier(propre|plein)=lait(entamé)*saladier(plein)",
-		"preconditions": {
-			"source":	{"obj": "lait", "état":"plein"},
-			"cible":	{"obj": "saladier", "état":["propre", "plein"]}
-		},
-		"postconditions": [
-			{"obj": "lait", "état": "entamé"},
-			{"obj": "saladier", "état": "plein"}
-		]
-	},
-	{
-		"rule": "lait(entamé)*saladier(propre|plein)=lait(presqueVide)*saladier(plein)",
-		"preconditions": {
-			"source":	{"obj": "lait", "état":"entamé"},
-			"cible":	{"obj": "saladier", "état":["propre", "plein"]}
-		},
-		"postconditions": [
-			{"obj": "lait", "état": "presqueVide"},
-			{"obj": "saladier", "état": "plein"}
-		]
-	},
-	{
-		"rule": "lait(presqueVide)*saladier(propre|plein)=lait(vide)*saladier(plein)",
-		"preconditions": {
-			"source":	{"obj": "lait", "état":"presqueVide"},
-			"cible":	{"obj": "saladier", "état":["propre", "plein"]}
-		},
-		"postconditions": [
-			{"obj": "lait", "état": "vide"},
-			{"obj": "saladier", "état": "plein"}
-		]
-	},
-	{
-		"rule": "cuillère(propre)*saladier(plein)=cuillère(sale)*saladier(mélangé)",
-		"preconditions": {
-			"source":	{"obj": "cuillère", "état":"propre"},
-			"cible":	{"obj": "saladier", "état":"plein"}
-		},
-		"postconditions": [
-			{"obj": "cuillère", "état": "sale"},
-			{"obj": "saladier", "état": "mélangé"}
-		]
-	},
-	{
-		"rule": "saladier(mélangé)*moule(vide)=saladier(sale)*moule(plein)",
-		"preconditions": {
-			"source":	{"obj": "saladier", "état":"mélangé"},
-			"cible":	{"obj": "moule", "état":"vide"}
-		},
-		"postconditions": [
-			{"obj": "saladier", "état": "sale"},
-			{"obj": "moule", "état": "plein"}
-		]
-	},
-	{
-		"rule": "moule(plein)*four(allumé)=moule(cuit)",
-		"preconditions": {
-			"source":	{"obj": "moule", "état":"plein"},
-			"cible":	{"obj": "four", "état":"allumé"}
-		},
-		"postconditions": [
-			{"obj": "moule", "état": "cuit"}
-		]
-	}
+recette = [
+	"oeuf(frais)*saladier(propre|plein)=oeuf(cassé)*saladier(plein)", "farine(neuf|entamé)*saladier(propre|plein)=farine(entamé)*saladier(plein)",
+	"lait(plein)*saladier(propre|plein)=lait(entamé)*saladier(plein)",
+	"lait(entamé)*saladier(propre|plein)=lait(presqueVide)*saladier(plein)",
+	"lait(presqueVide)*saladier(propre|plein)=lait(vide)*saladier(plein)",
+	"spatule(propre)*saladier(plein)=spatule(sale)*saladier(mélangé)",
+	"saladier(mélangé)*moule(vide)=saladier(sale)*moule(plein)",
+	"moule(plein)*four(allumé)=moule(cuit)"
 ]
