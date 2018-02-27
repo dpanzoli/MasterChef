@@ -15,18 +15,21 @@ function preload() {
 		game.load.spritesheet(o.nom, o.image.src, o.image.dimX, o.image.dimY, o.image.clés);
 		
 	});
-	
+
 	game.load.image('cuisine', 'assets/scène.png');
+
 }
 
 var ingredients;
 var scene, interactions;
+var sprites;
 
 var commande;
 
 function create() {
 
 	game.add.sprite(0, 0, 'cuisine');
+
 
 
     var style = { font: "32px Arial", fill: "#000000", align: "left" };
@@ -58,8 +61,6 @@ function create() {
 				};
 			});
 		});
-		
-		
 	});
 	
 	console.log(interactions);
@@ -67,8 +68,6 @@ function create() {
 	var selectionPrec = null;
 	
 	//Création des objets dans la scène
-	//Affectation du comportement drag&drop
-	//Référencement des sprites dans la scene
 	objetsGroup = game.add.group();
 	Object.keys(objets).forEach(function(key) {
 		var objet = objets[key];
@@ -121,7 +120,6 @@ function create() {
 			} else {
 				message("Utiliser "+selectionPrec+" avec "+obj.key);
 			}
-			
 		});
 		objet.sprite.events.onInputOut.add(function (obj) {
 			if (selectionPrec) {
@@ -132,9 +130,58 @@ function create() {
 		});
 		
 	});
+
+	//Aide
+	game.input.keyboard.onDownCallback = function(e) {
+		if(e.keyCode == Phaser.Keyboard.SPACEBAR){
+			if (draggedSprite) {
+				//Surbrillance sur les cibles possibles
+				console.log("allumer les objets cibles");
+				var source = draggedSprite.key+"/"+objets[draggedSprite.key].état;
+				if (interactions[source]!=undefined) {
+					Object.keys(interactions[source]).forEach(function(obj) {
+						var objet = obj.split('/')[0];
+						var état = obj.split('/')[1];
+						if (objets[objet].état == état) {
+							//L'objet peut subir une interaction
+							spr = objets[objet].sprite;
+							spr.tint = 0x00FF00;
+							nextCibles.push(spr);
+						}
+					});
+				}
+			} else {
+				//Surbrillance sur le prochain objet à utiliser
+				//------------------------
+				/*Il faudrait scanner tous les objets de la scène et retenir ceux
+				pour lesquels une interaction est possible.
+				C'est très peu optimisé !
+				Comment résoudre ce soucis ?
+				Une solution consiste à avoir une représentation du scénario et un algo
+				qui la suive.
+				Une meileure solution est d'utiliser un algo de résolution qui, à partir
+				d'un but donné (le gateau cuit) puisse trouver les "verrous" de manière
+				récursive et construire un "arbre d'objectifs"
+				*/
+			}
+		}
+	}
+
+
+	game.input.keyboard.onUpCallback = function(e) {
+		if(e.keyCode == Phaser.Keyboard.SPACEBAR){
+			nextSources.tint = 0xffffff;
+			nextCibles.forEach(function(o) {
+				o.tint = 0xFFFFFF;
+			});
+			nextCibles.splice(0, nextCibles.length);
+		}
+
+	}
 }
 
 var historique = [];
+
 
 function appliquer(action) {
 	action.postc.split('*').forEach(function(p) {
@@ -164,7 +211,6 @@ function message(texte, secondes, priorité) {
 			commande.lock = null;
 		}, this);
 	}
-
 }
 
 </script>
