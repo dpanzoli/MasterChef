@@ -2,97 +2,110 @@
 <html>
 <meta charset="UTF-8">
 <script src="phaser.min.js"></script>
-<script
 <script language="javascript">
 
-var game = new Phaser.Game(800, 600, Phaser.AUTO, 'MasterChef v1', { preload: preload, create: create });
-
-function preload() {
-
-	game.load.spritesheet('saladier', 'assets/saladier.png', 120, 60, 8);
-	game.load.spritesheet('moule', 'assets/moule.png', 120, 90, 3);
-	game.load.spritesheet('oeuf', 'assets/oeuf.png', 60, 60, 2);
-	game.load.spritesheet('lait', 'assets/lait.png', 60, 120, 4);
-	game.load.spritesheet('farine', 'assets/farine.png', 60, 90, 2);
-	game.load.spritesheet('spatule', 'assets/spatule.png', 90, 60, 2);
-	game.load.spritesheet('four', 'assets/four.png', 180, 180, 3);
-	game.load.spritesheet('cuisson', 'assets/cuisson.png', 180, 60, 2);
-	game.load.spritesheet('casserole', 'assets/casserole.png', 90, 90, 3);
-	game.load.spritesheet('épices', 'assets/épices.png', 20, 40, 1);
-	game.load.spritesheet('sucre', 'assets/sucre.png', 60, 90, 1);
-	game.load.spritesheet('miel', 'assets/miel.png', 40, 40, 1);
-	game.load.spritesheet('doseur', 'assets/verre_doseur.png', 60, 90, 2);
-
-	game.load.image('cuisine', 'assets/scène.png');
-	
-}
-
-var sprites;
-
-var objets = {
+objets = {
 	oeuf: {
-		nom: 'oeuf',
-		type: 'ingrédient',
-		états: ['frais','cassé'],
-		état: 'frais',
+		nom: "oeuf",
+		type: "ingrédient",
+		états: ["frais","cassé"],
+		état: "frais",
 		x:150,
 		y:410,
-		mobile: true
+		mobile: true,
+		image: {
+			src: "assets/oeuf.png",
+			dimX: 60,
+			dimY: 60,
+			clés: 2
+		}
 	},
 	lait: {
-		nom: 'lait',
-		type: 'ingrédient',
-		états: ['plein','entamé','presqueVide','vide'],
-		état: 'plein',
+		nom: "lait",
+		type: "ingrédient",
+		états: ["plein","entamé","presqueVide","vide"],
+		état: "plein",
 		x: 680,
 		y: 410,
-		mobile: true
+		mobile: true,
+		image: {
+			src: 'assets/lait.png',
+			dimX: 60,
+			dimY: 120,
+			clés: 4
+		}
 	},
 	farine: {
-		nom: 'farine',
-		type: 'ingrédient',
-		états: ['neuf','entamé'],
-		état: 'neuf',
+		nom: "farine",
+		type: "ingrédient",
+		états: ["neuf","entamé"],
+		état: "neuf",
 		x: 210,
 		y: 410,
-		mobile: true
-	},
-	saladier: {
-		nom: 'saladier',
-		type: 'ustensile',
-		états: ['propre', 'mélangé', 'sale', 'blanc', 'oeuf', 'épice', 'presqueTout', 'tout'],
-		état: 'propre',
-		contenu: [],
-		x: 400,
-		y: 410,
-		mobile: false
-	},
-	moule: {
-		nom: 'moule',
-		type: 'ustensile',
-		états: ['vide','plein','cuit'],
-		état: 'vide',
-		x: 550,
-		y: 450,
-		mobile: true
+		mobile: true,
+		image: {
+			src: 'assets/farine.png',
+			dimX: 60,
+			dimY: 90,
+			clés: 2
+		}
 	},
 	spatule: {
-		nom: 'spatule',
-		type: 'ustensile',
-		états: ['propre', 'sale'],
-		état: 'propre',
+		nom: "spatule",
+		type: "ustensile",
+		états: ["propre", "sale"],
+		état: "propre",
 		x: 350,
 		y: 460,
-		mobile: true
+		mobile: true,
+		image: {
+			src: 'assets/spatule.png',
+			dimX: 90,
+			dimY: 60,
+			clés: 2
+		}
+	},
+	saladier: {
+		nom: "saladier",
+		type: "ustensile",
+		états: ['propre', 'mélangé', 'sale', 'blanc','oeuf','épice','presqueTout', 'tout'],
+		état: "propre",
+		x: 400,
+		y: 410,
+		image: {
+			src: 'assets/saladier.png',
+			dimX: 120,
+			dimY: 60,
+			clés: 8
+		}
+	},
+	moule: {
+		nom: "moule",
+		type: "ustensile",
+		états: ["vide", "plein", "cuit", "auFour"],
+		état: "vide",
+		x: 550,
+		y: 450,
+		image: {
+			src: 'assets/moule.png',
+			dimX: 120,
+			dimY: 90,
+			clés: 4
+		}
 	},
 	four: {
-		nom: 'four',
-		type: 'électroménager',
-		états: ['éteint', 'allumé', 'cuisson'],
-		état: 'éteint',
+		nom: "four",
+		type: "",
+		états: ["éteint", "allumé", "cuisson"],
+		état: "éteint",
 		x: 680,
 		y: 260,
-		mobile: false
+		image: {
+			src: 'assets/four.png',
+			dimX: 180,
+			dimY: 180,
+			clés: 3
+		}
 	},
 	cuisson: {
 		nom: 'cuisson',
@@ -101,7 +114,12 @@ var objets = {
 		état: 'éteint',
 		x: 150,
 		y: 250,
-		mobile: false
+		image: {
+			src: 'assets/cuisson.png',
+			dimX: 180,
+			dimY: 60,
+			clés: 2
+		}
 	},
 	sucre: {
 		nom: 'sucre',
@@ -110,7 +128,13 @@ var objets = {
 		état: 'plein',
 		x: 70,
 		y: 420,
-		mobile: true
+		mobile: true,
+		image: {
+			src: 'assets/sucre.png',
+			dimX: 60,
+			dimY: 90,
+			clés: 1
+		}
 	},
 	miel: {
 		nom: 'miel',
@@ -119,7 +143,13 @@ var objets = {
 		état: 'plein',
 		x: 130,
 		y: 470,
-		mobile: true
+		mobile: true,
+		image: {
+			src: 'assets/miel.png',
+			dimX: 40,
+			dimY: 40,
+			clés: 1
+		}
 	},
 	casserole: {
 		nom: 'casserole',
@@ -127,8 +157,14 @@ var objets = {
 		états: ['vide', 'pleine', 'chaude'],
 		état: 'vide',
 		x: 680,
-		y: 470,
-		mobile: true
+		y: 485,
+		mobile: true,
+		image: {
+			src: 'assets/casserole.png',
+			dimX: 90,
+			dimY: 90,
+			clés: 3
+		}
 	},
 	épices: {
 		nom: 'épices',
@@ -137,7 +173,13 @@ var objets = {
 		état: 'plein',
 		x: 180,
 		y: 470,
-		mobile: true
+		mobile: true,
+		image: {
+			src: 'assets/épices.png',
+			dimX: 20,
+			dimY: 40,
+			clés: 1
+		}
 	},
 	doseur: {
 		nom: 'doseur',
@@ -146,9 +188,15 @@ var objets = {
 		état: 'vide',
 		x: 270,
 		y: 470,
-		mobile: true
+		mobile: true,
+		image: {
+			src: 'assets/verre_doseur.png',
+			dimX: 60,
+			dimY: 90,
+			clés: 2
+		}
 	},
-}
+};
 
 var interactions = {
 	'farine/neuf': {
@@ -190,7 +238,7 @@ var interactions = {
 		'cuisson/allumé': function(casserole, cuisson) {
 			game.time.events.add(Phaser.Timer.SECOND * 3, function() {
 				casserole.état='chaude'; casserole.sprite.frame=2;
-				
+
 			}, this);
 			casserole.x = 120; casserole.y = 230;
 		}
@@ -199,7 +247,7 @@ var interactions = {
 		'saladier/presqueTout': function(casserole, saladier) {
 			casserole.état='vide'; casserole.sprite.frame=0;
 			saladier.état='tout'; saladier.sprite.frame=7;
-		}		
+		}
 	},
 	'spatule/propre': {
 		'saladier/tout': function(spatule, saladier) {
@@ -236,7 +284,7 @@ var interactions = {
 				//fin de la recette
 				var text = game.add.text(game.world.centerX, game.world.height, "Bravo !\n Superbe pain d'épice !", { font: 'bold 48pt Arial'});
 				var grd = text.context.createLinearGradient(0, 0, 0, text.height);
-				grd.addColorStop(0, '#8CFFFF');   
+				grd.addColorStop(0, '#8CFFFF');
 				grd.addColorStop(1, '#2BFF60');
 				text.align = 'center';
 				text.fill = grd;
@@ -244,7 +292,6 @@ var interactions = {
 				text.strokeThickness = 5;
 				text.anchor.set(0.5,1);
 			}, this);
-			
 		}
 	},
 	'cuisson/éteint': {
@@ -254,17 +301,24 @@ var interactions = {
 	},
 };
 
+var sprites;
+
+var game = new Phaser.Game(800, 600, Phaser.AUTO, 'MasterChef', { preload: preload, create: create });
+
+function preload() {
+	Object.values(objets).forEach(function (o) {
+		if (o.image)
+			game.load.spritesheet(o.nom, o.image.src, o.image.dimX, o.image.dimY, o.image.clés);
+	});
+	game.load.image('cuisine', 'assets/scène.png');
+}
 
 function create() {
-
 	game.add.sprite(0, 0, 'cuisine');
-
-	
-	
 	sprites = game.add.group();
-
 	Object.keys(objets).forEach(function(objDataKey) {
 		objData = objets[objDataKey];
+		console.log(objData.nom)
 		objSprite = sprites.create(objData.x, objData.y, objData.nom, 0);
 		objSprite.anchor.setTo(0.5,1);
 		objData.sprite = objSprite;
