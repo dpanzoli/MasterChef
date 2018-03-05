@@ -6,23 +6,14 @@
 <script src="recette.json"></script>
 <script language="javascript">
 
-var game = new Phaser.Game(800, 600, Phaser.AUTO, 'MasterChef v1', { preload: preload, create: create });
+var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game', { preload: preload, create: create });
 
 function preload() {
 
-	game.load.spritesheet('saladier', 'assets/saladier.png', 120, 60, 8);
-	game.load.spritesheet('moule', 'assets/moule.png', 120, 90, 3);
-	game.load.spritesheet('oeuf', 'assets/oeuf.png', 60, 60, 2);
-	game.load.spritesheet('lait', 'assets/lait.png', 60, 120, 4);
-	game.load.spritesheet('farine', 'assets/farine.png', 60, 90, 2);
-	game.load.spritesheet('spatule', 'assets/spatule.png', 90, 60, 2);
-	game.load.spritesheet('four', 'assets/four.png', 180, 180, 3);
-	game.load.spritesheet('cuisson', 'assets/cuisson.png', 180, 60, 2);
-	game.load.spritesheet('casserole', 'assets/casserole.png', 90, 90, 3);
-	game.load.spritesheet('épices', 'assets/épices.png', 20, 40, 1);
-	game.load.spritesheet('sucre', 'assets/sucre.png', 60, 90, 1);
-	game.load.spritesheet('miel', 'assets/miel.png', 40, 40, 1);
-	game.load.spritesheet('doseur', 'assets/verre_doseur.png', 60, 90, 2);
+	Object.values(objets).forEach(function (o) {
+		if (o.image)
+			game.load.spritesheet(o.nom, o.image.src, o.image.dimX, o.image.dimY, o.image.clés);
+	});
 
 	game.load.image('cuisine', 'assets/scène.png');
 	game.load.image('bulle', 'Assets/bulle.png');
@@ -31,14 +22,7 @@ function preload() {
 
 var sprites;
 
-
-
-var recette = [
-	"doseur/plein",
-	"casse"
-]
-
-var nextSources=[], nextCibles=[], draggedSprite;
+var nextCibles=[];
 
 function create() {
 
@@ -54,8 +38,6 @@ function create() {
 		game.physics.enable(objSprite, Phaser.Physics.ARCADE);
 		objSprite.inputEnabled = true;
 		objSprite.input.useHandCursor = true;
-
-		nextSources = objSprite;
 
 		if (objData.mobile) objSprite.input.enableDrag(true);
 		//Gestion du drag&drop des objets pour les interactions entre
@@ -73,11 +55,11 @@ function create() {
 			}
 			//Remplissage de la liste des objets avec lesquels ont peut interagir
 			//Surbrillance sur les cibles possibles
-			var source = draggedSprite.key+"/"+objets[draggedSprite.key].état;
+			var source = obj.key+"/"+objets[obj.key].état;
 			if (interactions[source]!=undefined) {
-				Object.keys(interactions[source]).forEach(function(obj) {
-					var objet = obj.split('/')[0];
-					var état = obj.split('/')[1];
+				Object.keys(interactions[source]).forEach(function(objCible) {
+					var objet = objCible.split('/')[0];
+					var état = objCible.split('/')[1];
 					if (objets[objet].état == état) {
 						//L'objet peut subir une interaction
 						spr = objets[objet].sprite;
@@ -127,4 +109,10 @@ function create() {
 }
 
 </script>
+</head>
+<body>
+	<div id="game"></div>
+	<p>Dans cette implémentation, le chargement et le placement des objets est automatique. On a créé pour cela un dictionnaire des objets dans lequel on stocke toutes les informations sur les objets avant le lancement du jeu (sprite, cordonnées dans l'environnement, états, etc.) et après le lancement du jeu (sprite Phaser.io, état courant, etc).</p>
+<p>Une deuxième structure de données </p>
+</body>
 </html>
