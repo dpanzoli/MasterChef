@@ -25,6 +25,7 @@ function preload() {
 	game.load.spritesheet('doseur', 'assets/verre_doseur.png', 60, 90, 2);
 
 	game.load.image('cuisine', 'assets/scène.png');
+	game.load.image('bulle', 'Assets/bulle.png');
 
 }
 
@@ -70,6 +71,21 @@ function create() {
 					true
 				);
 			}
+			//Remplissage de la liste des objets avec lesquels ont peut interagir
+			//Surbrillance sur les cibles possibles
+			var source = draggedSprite.key+"/"+objets[draggedSprite.key].état;
+			if (interactions[source]!=undefined) {
+				Object.keys(interactions[source]).forEach(function(obj) {
+					var objet = obj.split('/')[0];
+					var état = obj.split('/')[1];
+					if (objets[objet].état == état) {
+						//L'objet peut subir une interaction
+						spr = objets[objet].sprite;
+						spr.tint = 0x00FF00;
+						nextCibles.push(spr);
+					}
+				});
+			}
 		}, this);
 		objSprite.events.onDragStop.add(function(obj) {
 			draggedSprite = null;
@@ -86,6 +102,11 @@ function create() {
 			});
 			//Dans tous les cas, l'objet retourne à sa (nouvelle ?) place
 			obj.retourne();
+			//Extinction des objets en surbrillance.
+			nextCibles.forEach(function(o) {
+				o.tint = 0xFFFFFF;
+			});
+			nextCibles.splice(0, nextCibles.length);
 		}, this);
 
 		//Les objets qu'on ne peut pas drag&dropper peuvent
@@ -103,53 +124,6 @@ function create() {
 		});
 	});
 
-	//Aide
-	game.input.keyboard.onDownCallback = function(e) {
-		if(e.keyCode == Phaser.Keyboard.SPACEBAR){
-			if (draggedSprite) {
-				//Surbrillance sur les cibles possibles
-				console.log("allumer les objets cibles");
-				var source = draggedSprite.key+"/"+objets[draggedSprite.key].état;
-				if (interactions[source]!=undefined) {
-					Object.keys(interactions[source]).forEach(function(obj) {
-						var objet = obj.split('/')[0];
-						var état = obj.split('/')[1];
-						if (objets[objet].état == état) {
-							//L'objet peut subir une interaction
-							spr = objets[objet].sprite;
-							spr.tint = 0x00FF00;
-							nextCibles.push(spr);
-						}
-					});
-				}
-			} else {
-				//Surbrillance sur le prochain objet à utiliser
-				//------------------------
-				/*Il faudrait scanner tous les objets de la scène et retenir ceux
-				pour lesquels une interaction est possible.
-				C'est très peu optimisé !
-				Comment résoudre ce soucis ?
-				Une solution consiste à avoir une représentation du scénario et un algo
-				qui la suive.
-				Une meileure solution est d'utiliser un algo de résolution qui, à partir
-				d'un but donné (le gateau cuit) puisse trouver les "verrous" de manière
-				récursive et construire un "arbre d'objectifs"
-				*/
-			}
-		}
-	}
-
-
-	game.input.keyboard.onUpCallback = function(e) {
-		if(e.keyCode == Phaser.Keyboard.SPACEBAR){
-			nextSources.tint = 0xffffff;
-			nextCibles.forEach(function(o) {
-				o.tint = 0xFFFFFF;
-			});
-			nextCibles.splice(0, nextCibles.length);
-		}
-
-	}
 }
 
 </script>
